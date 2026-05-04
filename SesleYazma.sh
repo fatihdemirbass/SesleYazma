@@ -1,4 +1,5 @@
 #!/bin/bash
+# Sesle Yazma Kurulum Scripti - fatihdemirbass
 
 echo "🎙️ CachyOS/Arch Sesle Yazdırma Kurulumu Başlıyor..."
 
