@@ -1,11 +1,11 @@
 #!/bin/bash
-# Sesle Yazma Kurulum Scripti - fatihdemirbass
+# Güncellenmiş Sesle Yazma Kurulum Scripti
 
-echo "🎙️ CachyOS/Arch Sesle Yazdırma Kurulumu Başlıyor..."
+echo "🎙️ CachyOS/Arch Sesle Yazdırma Kurulumu Güncelleniyor..."
 
-# 1. Gerekli paketleri yükle
+# 1. Gerekli paketleri yükle (Ses motoru ve klavye emülasyonu)
 echo "📦 Bağımlılıklar yükleniyor..."
-sudo pacman -S --needed xdotool ydotool unzip wget --noconfirm
+sudo pacman -S --needed xdotool unzip wget --noconfirm
 
 # Nerd-dictation yüklü mü kontrol et, değilse yay ile kur
 if ! command -v nerd-dictation &> /dev/null; then
@@ -13,22 +13,37 @@ if ! command -v nerd-dictation &> /dev/null; then
     yay -S nerd-dictation-git --noconfirm
 fi
 
-# 2. Türkçe modeli indir ve ayarla
-echo "🌍 Türkçe dil modeli indiriliyor (yaklaşık 40MB)..."
-wget -O model.zip https://alphacephei.com
+# 2. Türkçe modeli indir ve ayarla (Güncel Link)
+MODEL_DIR="$HOME/model-tr"
+echo "🌍 Türkçe dil modeli indiriliyor..."
 
+# Eğer eski model varsa sil
+if [ -d "$MODEL_DIR" ]; then
+    rm -rf "$MODEL_DIR"
+fi
+
+# Güncel Vosk Türkçe Küçük Model
+wget -O model-tr.zip https://alphacephei.com
 echo "📂 Klasörler düzenleniyor..."
-unzip model.zip
-rm model.zip
-mv vosk-model-small-tr-0.3 $HOME/model-tr
+unzip -q model-tr.zip
+mv vosk-model-small-tr-0.4 $MODEL_DIR
+rm model-tr.zip
 
-# 3. Kolay kullanım için bir alias (takma ad) ekle
-echo "📝 Terminale 'sesle-yaz' komutu ekleniyor..."
-echo "alias sesle-yaz='nerd-dictation begin --vosk-model-dir=\$HOME/model-tr --timeout 3.0 --input-tool=XDOTOOL --v-type-args \"--clearmodifiers\"'" >> ~/.bashrc
-echo "alias sesle-yaz='nerd-dictation begin --vosk-model-dir=\$HOME/model-tr --timeout 3.0 --input-tool=XDOTOOL --v-type-args \"--clearmodifiers\"'" >> ~/.zshrc
+# 3. Kolay kullanım için alias'ı güncelle
+echo "📝 Terminale sesle-yaz komutu ekleniyor..."
 
-echo "✅ KURULUM TAMAMLANDI!"
+# Eski aliasları temizle (çift eklenmemesi için)
+sed -i '/alias sesle-yaz=/d' ~/.bashrc
+sed -i '/alias sesle-yaz=/d' ~/.zshrc
+
+# Yeni alias ekle (Komut yapısı güncellendi)
+ALIAS_CMD="alias sesle-yaz='nerd-dictation begin --vosk-model-dir=$MODEL_DIR --input-tool=xdotool'"
+
+echo "$ALIAS_CMD" >> ~/.bashrc
+echo "$ALIAS_CMD" >> ~/.zshrc
+
+echo "✅ KURULUM/GÜNCELLEME TAMAMLANDI!"
 echo "-------------------------------------------------------"
-echo "Kullanmak için terminali kapatıp açın veya 'source ~/.bashrc' yazın."
+echo "Kullanmak için: source ~/.bashrc veya terminali yeniden açın."
 echo "Komut: sesle-yaz"
-echo "Kısayol için ayarlardan bu komutu eklemeyi unutmayın!"
+echo "⚠️ Not: Mikrofonunuzun 'pavucontrol' üzerinden seçili olduğundan emin olun."
