@@ -1,5 +1,5 @@
 #!/bin/bash
-# Güncellenmiş Sesle Yazma Kurulum Scripti
+# Sesle Yazma Kurulum Scripti
 
 echo "🎙️ CachyOS/Arch Sesle Yazdırma Kurulumu Güncelleniyor..."
 
